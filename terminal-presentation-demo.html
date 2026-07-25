@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terminal Presentation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:#0a0a0a;font-family:'Fira Code',monospace;color:#00ff41}
+body{display:flex;flex-direction:column}
+.slides-container{flex:1;position:relative;overflow:hidden}
+.slide{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:60px 80px 50px;opacity:0;transform:translateX(60px);transition:opacity .5s cubic-bezier(.4,0,.2,1),transform .5s cubic-bezier(.4,0,.2,1);pointer-events:none;overflow:hidden}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:auto}
+.slide.exit-left{opacity:0;transform:translateX(-60px)}
+.slide.exit-right{opacity:0;transform:translateX(60px)}
+.scanlines{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9998;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,255,65,.03) 2px,rgba(0,255,65,.03) 4px)}
+.scanlines::after{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:radial-gradient(ellipse at center,transparent 0%,rgba(0,0,0,.4) 100%);pointer-events:none}
+.status-bar{height:32px;background:#0d0d0d;border-top:1px solid #00ff4122;display:flex;align-items:center;padding:0 20px;font-size:13px;color:#00ff4199;flex-shrink:0;z-index:9999;position:relative}
+.status-left{display:flex;align-items:center;gap:6px}
+.status-dot{width:8px;height:8px;border-radius:50%;background:#00ff41;display:inline-block;animation:pulse-dot 1.5s infinite}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.3}}
+.status-right{margin-left:auto;display:flex;align-items:center;gap:16px}
+.status-progress{display:flex;align-items:center;gap:6px}
+.progress-bar-bg{width:100px;height:10px;background:#1a1a1a;border:1px solid #00ff4133;position:relative;overflow:hidden;border-radius:2px}
+.progress-bar-fill{height:100%;background:#00ff41;transition:width .6s cubic-bezier(.4,0,.2,1);border-radius:2px;position:relative}
+.progress-bar-fill::after{content:'';position:absolute;top:0;right:0;width:20px;height:100%;background:linear-gradient(90deg,transparent,rgba(0,255,65,.4))}
+.slide-num{color:#00ff4199;min-width:80px;text-align:right}
+/* slide content */
+.slide-content{max-width:880px;width:100%;position:relative;z-index:2}
+h1{font-size:clamp(1.8rem,4vw,3.2rem);font-weight:700;line-height:1.3}
+h2{font-size:clamp(1.3rem,2.5vw,2rem);font-weight:500;margin-bottom:20px}
+.cursor-blink{display:inline-block;width:12px;height:1.1em;background:#00ff41;margin-left:4px;vertical-align:text-bottom;animation:blink-cursor .8s step-end infinite}
+@keyframes blink-cursor{0%,100%{opacity:1}50%{opacity:0}}
+.typewriter-char{display:inline-block;opacity:0;animation:fadeInChar .05s forwards}
+@keyframes fadeInChar{to{opacity:1}}
+.subtitle{color:#00ff4199;font-size:clamp(.85rem,1.5vw,1.1rem);margin-top:12px}
+.prompt{color:#757575;user-select:none}
+.cmd{color:#00ff41;font-weight:500}
+.output{color:#00ff4199;margin-top:6px;padding-left:0}
+.output-line{padding:2px 0;white-space:pre-wrap;word-break:break-word}
+.output-line.data{color:#00ff41}
+.output-line.dim{color:#00ff4177}
+.output-line.highlight{color:#00ff41;font-weight:500;padding-left:16px;border-left:2px solid #00ff41;margin:4px 0}
+.output-line.indent{padding-left:20px}
+.ascii-box{border:1px solid #00ff4133;padding:16px 20px;margin:10px 0;position:relative}
+.ascii-box::before{content:'┌──';position:absolute;top:-1px;left:-1px;color:#00ff4133;font-size:10px}
+.ascii-box::after{content:'──┘';position:absolute;bottom:-1px;right:-1px;color:#00ff4133;font-size:10px}
+.ascii-table{display:grid;grid-template-columns:auto 1fr auto;gap:2px 16px;font-size:clamp(.75rem,1.2vw,.9rem);margin:10px 0}
+.ascii-table .header{color:#00ff41;font-weight:500;border-bottom:1px solid #00ff4133;padding-bottom:4px;margin-bottom:4px}
+.ascii-table .cell{color:#00ff4199}
+.ascii-table .cell.val{color:#00ff41}
+.breadcrumb{font-size:clamp(.8rem,1.4vw,1rem);color:#00ff4199;padding:8px 12px;background:#0d0d0d;border:1px solid #00ff4122;border-radius:2px;display:inline-flex;align-items:center;gap:4px;flex-wrap:wrap}
+.breadcrumb .sep{color:#00ff4133}
+.breadcrumb .active-part{color:#00ff41;font-weight:500}
+.breadcrumb .arrow{color:#00ff41;margin-left:4px}
+.matrix-rain{position:absolute;top:0;left:0;width:100%;height:100%;z-index:0;opacity:0;transition:opacity 1s}
+.slide.active .matrix-rain{opacity:.15}
+.matrix-rain canvas{display:block;width:100%;height:100%}
+.msg-error{color:#ff3355;border-left:3px solid #ff3355;padding:10px 16px;background:rgba(255,51,85,.08);margin:6px 0;font-size:clamp(.8rem,1.3vw,.95rem)}
+.msg-success{color:#00ff41;border-left:3px solid #00ff41;padding:10px 16px;background:rgba(0,255,65,.06);margin:6px 0;font-size:clamp(.8rem,1.3vw,.95rem)}
+.msg-warning{color:#ffaa00;border-left:3px solid #ffaa00;padding:10px 16px;background:rgba(255,170,0,.08);margin:6px 0;font-size:clamp(.8rem,1.3vw,.95rem)}
+.msg-error .prefix,.msg-warning .prefix,.msg-success .prefix{font-weight:700;margin-right:8px;user-select:none}
+.blink-text{animation:blinkSoft 1.2s ease-in-out infinite}
+@keyframes blinkSoft{0%,100%{opacity:1}50%{opacity:.3}}
+.scroll-up{overflow:hidden}
+.scroll-content{animation:scrollUp 1.8s cubic-bezier(.4,0,.2,1) forwards;transform:translateY(0)}
+@keyframes scrollUp{0%{transform:translateY(0)}100%{transform:translateY(-100%)}}
+.fade-in-delay{opacity:0;animation:fadeUp .4s forwards}
+.fade-in-delay:nth-child(1){animation-delay:.15s}
+.fade-in-delay:nth-child(2){animation-delay:.3s}
+.fade-in-delay:nth-child(3){animation-delay:.45s}
+.fade-in-delay:nth-child(4){animation-delay:.6s}
+.fade-in-delay:nth-child(5){animation-delay:.75s}
+.fade-in-delay:nth-child(6){animation-delay:.9s}
+.fade-in-delay:nth-child(7){animation-delay:1.05s}
+.fade-in-delay:nth-child(8){animation-delay:1.2s}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.tag{display:inline-block;padding:2px 8px;border:1px solid #00ff4133;font-size:.7rem;color:#00ff4199;margin-right:4px}
+.spacer{height:16px}
+.spacer-sm{height:8px}
+.glitch{position:relative}
+.glitch::before,.glitch::after{content:attr(data-text);position:absolute;top:0;left:0;width:100%;height:100%;opacity:0}
+.slide.active .glitch::before{color:#ff3355;animation:glitch1 2s infinite;clip-path:polygon(0 0,100% 0,100% 35%,0 35%)}
+.slide.active .glitch::after{color:#00aaff;animation:glitch2 2s infinite;clip-path:polygon(0 65%,100% 65%,100% 100%,0 100%)}
+@keyframes glitch1{0%,5%,100%{transform:translate(0);opacity:0}1%{transform:translate(-2px,-1px);opacity:.8}2%{transform:translate(2px,1px);opacity:.6}}
+@keyframes glitch2{0%,5%,100%{transform:translate(0);opacity:0}1%{transform:translate(2px,1px);opacity:.6}2%{transform:translate(-2px,-1px);opacity:.8}}
+.divider{height:1px;background:linear-gradient(90deg,transparent,#00ff4133,transparent);margin:14px 0;width:100%}
+big{font-size:1.4em}
+.typing-cursor{display:inline-block;width:10px;height:1.1em;background:#00ff41;margin-left:2px;animation:blink-cursor .8s step-end infinite;vertical-align:text-bottom}
+</style>
+</head>
+<body>
+
+<div class="scanlines"></div>
+
+<div class="slides-container" id="slidesContainer">
+
+<!-- SLIDE 1: TITLE -->
+<div class="slide active" data-slide="0">
+  <div class="slide-content" style="text-align:center">
+    <div style="font-size:clamp(.75rem,1.2vw,.9rem);color:#00ff4133;margin-bottom:20px;letter-spacing:6px;text-transform:uppercase">TERMINAL PRESENTATION v2.0</div>
+    <h1 id="titleLine"><span class="prompt">$</span> <span id="typedTitle"></span><span class="cursor-blink" id="titleCursor"></span></h1>
+    <div class="subtitle" id="subtitleLine" style="opacity:0">A terminal-themed slide deck · 9 slides · keyboard navigation</div>
+    <div style="margin-top:40px;font-size:clamp(.65rem,1vw,.8rem);color:#00ff4144">
+      <span class="tag">← → navigate</span>
+      <span class="tag">ESC overview</span>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 2: COMMAND STYLE -->
+<div class="slide" data-slide="1">
+  <div class="slide-content">
+    <div class="fade-in-delay"><span class="prompt">$</span> <span class="cmd">cat about.md</span></div>
+    <div class="spacer-sm"></div>
+    <div class="fade-in-delay output">
+      <div class="output-line data"># Terminal Presentation</div>
+      <div class="output-line dim">A lightweight, keyboard-driven presentation engine</div>
+      <div class="output-line data">rendered entirely in your browser.</div>
+      <div class="spacer-sm"></div>
+      <div class="output-line highlight">Features:</div>
+      <div class="output-line indent">- Zero external dependencies (except font CDN)</div>
+      <div class="output-line indent">- ASCII art &amp; terminal UI components</div>
+      <div class="output-line indent">- Matrix rain, scanlines &amp; CRT effects</div>
+      <div class="output-line indent">- Slide transitions with keyboard nav</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 3: ASCII ART -->
+<div class="slide" data-slide="2">
+  <div class="slide-content">
+    <h2 class="fade-in-delay"><span class="prompt">$</span> <span class="cmd">./show --art</span></h2>
+    <div class="spacer-sm"></div>
+    <div class="fade-in-delay ascii-box" style="font-size:clamp(.6rem,1.1vw,.8rem);line-height:1.5;text-align:center;color:#00ff41">
+      ╔══════════════════════════════════════╗<br>
+      ║      TERMINAL PRESENTATION SUITE      ║<br>
+      ╠═══════╦══════════╦═══════════════════╣<br>
+      ║ MODULE ║  STATUS  ║    VERSION        ║<br>
+      ╠═══════╬══════════╬═══════════════════╣<br>
+      ║ core   ║  ● ready ║  v2.0.1          ║<br>
+      ║ ui     ║  ● ready ║  v1.9.4          ║<br>
+      ║ fx     ║  ● ready ║  v2.3.0          ║<br>
+      ║ ascii  ║  ● ready ║  v1.0.0          ║<br>
+      ╚═══════╩══════════╩═══════════════════╝
+    </div>
+    <div class="fade-in-delay ascii-table" style="margin-top:16px">
+      <span class="header">Flag</span><span class="header">Description</span><span class="header">Default</span>
+      <span class="cell">--art</span><span class="cell val">Display ASCII components</span><span class="cell val">true</span>
+      <span class="cell">--crt</span><span class="cell val">Enable CRT scanlines</span><span class="cell val">true</span>
+      <span class="cell">--rain</span><span class="cell val">Matrix rain effect</span><span class="cell val">false</span>
+      <span class="cell">--help</span><span class="cell val">Show this help</span><span class="cell val">—</span>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 4: FILESYSTEM BREADCRUMB -->
+<div class="slide" data-slide="3">
+  <div class="slide-content">
+    <div class="fade-in-delay breadcrumb">
+      <span>~</span><span class="sep">/</span>
+      <span>slides</span><span class="sep">/</span>
+      <span class="active-part">04_features</span>
+      <span>.md</span>
+      <span class="arrow">&gt;</span>
+    </div>
+    <div class="spacer"></div>
+    <div class="fade-in-delay">
+      <div class="output-line data" style="font-size:clamp(.85rem,1.3vw,1rem)"><span class="prompt">$</span> <span class="cmd">tree -L 1 --dirsfirst</span></div>
+    </div>
+    <div class="spacer-sm"></div>
+    <div class="fade-in-delay output" style="font-size:clamp(.75rem,1.2vw,.9rem)">
+      <div class="output-line">.</div>
+      <div class="output-line">├── <span style="color:#00aaff">slides/</span></div>
+      <div class="output-line">│   ├── 01_title.md</div>
+      <div class="output-line">│   ├── 02_about.md</div>
+      <div class="output-line">│   ├── 03_ascii.md</div>
+      <div class="output-line">│   ├── <span style="color:#00ff41;font-weight:500">04_features.md</span></div>
+      <div class="output-line">│   ├── 05_progress.md</div>
+      <div class="output-line">│   ├── 06_matrix.md</div>
+      <div class="output-line">│   ├── 07_messages.md</div>
+      <div class="output-line">│   ├── 08_clear.md</div>
+      <div class="output-line">│   └── 09_end.md</div>
+      <div class="output-line">├── <span style="color:#00aaff">assets/</span></div>
+      <div class="output-line">├── index.html</div>
+      <div class="output-line">└── README.md</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 5: PROGRESS BAR -->
+<div class="slide" data-slide="4">
+  <div class="slide-content">
+    <h2 class="fade-in-delay"><span class="prompt">$</span> <span class="cmd">./deploy --status</span></h2>
+    <div class="spacer"></div>
+    <div class="fade-in-delay" style="margin:8px 0">
+      <div style="display:flex;justify-content:space-between;font-size:clamp(.7rem,1.1vw,.85rem);color:#00ff4199;margin-bottom:4px">
+        <span>Building assets...</span>
+        <span id="deployPercent">0%</span>
+      </div>
+      <div class="progress-bar-bg" style="width:100%">
+        <div class="progress-bar-fill" id="deployBar" style="width:0%"></div>
+      </div>
+    </div>
+    <div class="spacer-sm"></div>
+    <div class="fade-in-delay" style="margin:8px 0">
+      <div style="display:flex;justify-content:space-between;font-size:clamp(.7rem,1.1vw,.85rem);color:#00ff4199;margin-bottom:4px">
+        <span>Optimizing images...</span>
+        <span id="optimPercent">0%</span>
+      </div>
+      <div class="progress-bar-bg" style="width:100%">
+        <div class="progress-bar-fill" id="optimBar" style="width:0%"></div>
+      </div>
+    </div>
+    <div class="spacer-sm"></div>
+    <div class="fade-in-delay" style="margin:8px 0">
+      <div style="display:flex;justify-content:space-between;font-size:clamp(.7rem,1.1vw,.85rem);color:#00ff4199;margin-bottom:4px">
+        <span>Linking modules...</span>
+        <span id="linkPercent">0%</span>
+      </div>
+      <div class="progress-bar-bg" style="width:100%">
+        <div class="progress-bar-fill" id="linkBar" style="width:0%"></div>
+      </div>
+    </div>
+    <div class="spacer"></div>
+    <div class="fade-in-delay output" id="deployOutput" style="font-size:clamp(.7rem,1.1vw,.85rem)">
+      <div class="output-line dim">⏳ Waiting for build to complete...</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 6: MATRIX RAIN -->
+<div class="slide" data-slide="5">
+  <div class="matrix-rain" id="matrixRain"><canvas id="matrixCanvas"></canvas></div>
+  <div class="slide-content" style="text-align:center;z-index:3">
+    <h2 class="fade-in-delay glitch" data-text="MATRIX OVERLAY" style="font-size:clamp(1.2rem,2.5vw,2rem)">MATRIX OVERLAY</h2>
+    <div class="spacer"></div>
+    <div class="fade-in-delay output" style="font-size:clamp(.8rem,1.3vw,.95rem);text-align:left;display:inline-block">
+      <div class="output-line"><span class="prompt">$</span> <span class="cmd">systemctl --status</span></div>
+      <div class="output-line data">  ● terminal.slice    active</div>
+      <div class="output-line data">  ● matrix.service    running</div>
+      <div class="output-line data">  ● crt.effect        enabled</div>
+    </div>
+    <div class="spacer"></div>
+    <div class="fade-in-delay" style="font-size:clamp(.65rem,1vw,.8rem);color:#00ff4144">Content overlaid on live Matrix digital rain</div>
+  </div>
+</div>
+
+<!-- SLIDE 7: ERROR / SUCCESS MESSAGES -->
+<div class="slide" data-slide="6">
+  <div class="slide-content">
+    <h2 class="fade-in-delay"><span class="prompt">$</span> <span class="cmd">./validate --all</span></h2>
+    <div class="spacer-sm"></div>
+    <div class="fade-in-delay msg-success">
+      <span class="prefix">✓ SUCCESS</span> All 12 core modules passed validation
+    </div>
+    <div class="fade-in-delay msg-success">
+      <span class="prefix">✓ SUCCESS</span> ASCII renderer: 100% compatibility
+    </div>
+    <div class="fade-in-delay msg-warning">
+      <span class="prefix">⚠ WARNING</span> Deprecated API: slide._legacy() will be removed in v3.0
+    </div>
+    <div class="fade-in-delay msg-error">
+      <span class="prefix">✗ ERROR</span> Connection timeout on remote host 10.0.1.45
+    </div>
+    <div class="fade-in-delay msg-warning">
+      <span class="prefix">⚠ WARNING</span> 2 unused dependencies detected in package.json
+    </div>
+    <div class="fade-in-delay msg-success">
+      <span class="prefix">✓ SUCCESS</span> Build artifacts deployed to ./dist/
+    </div>
+    <div class="spacer"></div>
+    <div class="fade-in-delay" style="font-size:clamp(.7rem,1.1vw,.85rem);color:#00ff4166">
+      <span class="prompt">$</span> <span class="cmd">echo $?</span>  →  <span style="color:#00ff41">0</span>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 8: SCROLL CLEAR TRANSITION -->
+<div class="slide" data-slide="7">
+  <div class="slide-content" style="text-align:center">
+    <div class="scroll-up" style="width:100%">
+      <div class="scroll-content">
+        <div style="font-size:clamp(.8rem,1.3vw,.95rem);color:#00ff4166;margin-bottom:30px">
+          <div class="output-line dim">[SESSION LOG] 2026-07-25 14:32:01</div>
+          <div class="output-line dim">> processing slide 08_clear.md</div>
+          <div class="output-line dim">> buffer flush — 142 lines</div>
+          <div class="output-line dim">> scroll: reset viewport</div>
+          <div class="output-line dim">> ...</div>
+        </div>
+        <div class="divider"></div>
+        <h2 style="margin-top:20px;font-size:clamp(1.2rem,2.5vw,2rem)">
+          <span class="prompt">$</span> <span class="cmd">clear</span><span class="cursor-blink"></span>
+        </h2>
+        <div class="spacer"></div>
+        <div style="font-size:clamp(.7rem,1.1vw,.85rem);color:#00ff4144">
+          screen cleared · 142 lines flushed
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 9: END / SUMMARY -->
+<div class="slide" data-slide="8">
+  <div class="slide-content" style="text-align:center">
+    <h2 style="font-size:clamp(1.5rem,3vw,2.5rem);margin-bottom:20px">
+      <span class="prompt">$</span> <span class="cmd">./finish</span>
+    </h2>
+    <div class="spacer"></div>
+    <div class="blink-text" style="font-size:clamp(1.8rem,4vw,3.2rem);font-weight:700;margin:20px 0">
+      THANK YOU
+    </div>
+    <div class="spacer-sm"></div>
+    <div style="font-size:clamp(.85rem,1.4vw,1.1rem);color:#00ff4199">
+      <div><span class="prompt">$</span> <span class="cmd">source ~/.bashrc</span>  <span class="cursor-blink"></span></div>
+      <div class="spacer-sm"></div>
+      <div class="output-line dim">Terminal Presentation Demo · 9 slides</div>
+      <div class="output-line dim">Press <span style="color:#00ff41">←</span> or <span style="color:#00ff41">→</span> to restart</div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<div class="status-bar">
+  <div class="status-left">
+    <span class="status-dot"></span>
+    <span id="statusPrompt">user@terminal:~/slides $</span>
+  </div>
+  <div class="status-right">
+    <span class="status-progress">
+      <span id="statusPercent">0%</span>
+      <span class="progress-bar-bg"><span class="progress-bar-fill" id="statusBarFill" style="width:0%"></span></span>
+    </span>
+    <span class="slide-num" id="slideNum">01 / 09</span>
+  </div>
+</div>
+
+<script>
+(function(){
+  var slides = document.querySelectorAll('.slide');
+  var totalSlides = slides.length;
+  var current = 0;
+  var transitioning = false;
+
+  var statusPrompt = document.getElementById('statusPrompt');
+  var slideNum = document.getElementById('slideNum');
+  var statusBarFill = document.getElementById('statusBarFill');
+  var statusPercent = document.getElementById('statusPercent');
+
+  function updateStatus(idx) {
+    var pct = Math.round(((idx + 1) / totalSlides) * 100);
+    statusBarFill.style.width = pct + '%';
+    statusPercent.textContent = pct + '%';
+    var numStr = String(idx + 1).padStart(2,'0');
+    slideNum.textContent = numStr + ' / ' + String(totalSlides).padStart(2,'0');
+  }
+
+  function goToSlide(idx) {
+    if (transitioning) return;
+    if (idx < 0) idx = totalSlides - 1;
+    if (idx >= totalSlides) idx = 0;
+    if (idx === current) return;
+    transitioning = true;
+
+    var dir = idx > current ? 'right' : 'left';
+    var reverseDir = idx > current ? 'left' : 'right';
+
+    slides[current].classList.remove('active');
+    slides[current].classList.add('exit-' + dir);
+
+    slides[idx].classList.remove('exit-left','exit-right');
+    slides[idx].classList.add('active');
+
+    var self = this;
+    setTimeout(function(){
+      slides[current].classList.remove('exit-left','exit-right');
+      current = idx;
+      updateStatus(current);
+      transitioning = false;
+    }, 500);
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault();
+      goToSlide(current + 1);
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      goToSlide(current - 1);
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      goToSlide(0);
+    } else if (e.key === 'g' && e.ctrlKey) {
+      e.preventDefault();
+      var n = prompt('Go to slide (1-' + totalSlides + '):');
+      if (n) { n = parseInt(n,10); if (n >=1 && n <= totalSlides) goToSlide(n-1); }
+    }
+  });
+
+  // touch swipe
+  var touchStartX = 0;
+  document.addEventListener('touchstart', function(e) { touchStartX = e.changedTouches[0].screenX; });
+  document.addEventListener('touchend', function(e) {
+    var diff = touchStartX - e.changedTouches[0].screenX;
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) goToSlide(current + 1);
+      else goToSlide(current - 1);
+    }
+  });
+
+  // click nav: left half = prev, right half = next
+  document.addEventListener('click', function(e) {
+    if (e.target.closest('.status-bar')) return;
+    var rect = document.body.getBoundingClientRect();
+    if (e.clientX < rect.width * 0.4) goToSlide(current - 1);
+    else if (e.clientX > rect.width * 0.6) goToSlide(current + 1);
+  });
+
+  // SLIDE 1: Typewriter
+  (function titleTypewriter() {
+    var text = 'Terminal Presentation Demo';
+    var el = document.getElementById('typedTitle');
+    var cursor = document.getElementById('titleCursor');
+    var subtitle = document.getElementById('subtitleLine');
+    var i = 0;
+    var speed = 55;
+    function type() {
+      if (i < text.length) {
+        el.textContent += text.charAt(i);
+        i++;
+        setTimeout(type, speed);
+      } else {
+        cursor.style.display = 'none';
+        subtitle.style.opacity = '1';
+        subtitle.style.transition = 'opacity .6s ease';
+      }
+    }
+    el.textContent = '';
+    setTimeout(type, 400);
+  })();
+
+  // SLIDE 5: Progress bar animation
+  (function deployProgress() {
+    var steps = [
+      { bar: 'deployBar', pct: 'deployPercent', label: 'deploy', target: 100 },
+      { bar: 'optimBar', pct: 'optimPercent', label: 'optim', target: 100 },
+      { bar: 'linkBar', pct: 'linkPercent', label: 'link', target: 100 }
+    ];
+    var outputEl = document.getElementById('deployOutput');
+    var messages = [
+      '⏳ Initializing build pipeline...',
+      '⚙️  Compiling source modules...',
+      '📦 Bundling dependencies...',
+      '🔗 Linking shared objects...',
+      '🧪 Running test suite...',
+      '✅ Build complete. Ready for deployment.'
+    ];
+    var mi = 0;
+
+    var pct = [0, 0, 0];
+    var speeds = [180, 240, 300];
+
+    function tick() {
+      var done = true;
+      for (var s = 0; s < steps.length; s++) {
+        if (pct[s] < steps[s].target) {
+          done = false;
+          pct[s] = Math.min(pct[s] + 1, steps[s].target);
+          document.getElementById(steps[s].bar).style.width = pct[s] + '%';
+          document.getElementById(steps[s].pct).textContent = pct[s] + '%';
+        }
+      }
+
+      if (pct[0] > 20 && mi === 0) { outputEl.innerHTML = '<div class="output-line dim">' + messages[1] + '</div>'; mi++; }
+      if (pct[0] > 50 && mi === 1) { outputEl.innerHTML = '<div class="output-line dim">' + messages[2] + '</div>'; mi++; }
+      if (pct[1] > 30 && mi === 2) { outputEl.innerHTML = '<div class="output-line dim">' + messages[3] + '</div>'; mi++; }
+      if (pct[1] > 70 && mi === 3) { outputEl.innerHTML = '<div class="output-line dim">' + messages[4] + '</div>'; mi++; }
+      if (pct[2] > 50 && mi === 4) { outputEl.innerHTML = '<div class="output-line dim">' + messages[5] + '</div>'; mi++; }
+      if (done && mi < 6) {
+        outputEl.innerHTML = '<div class="output-line data" style="color:#00ff41">✅ ' + messages[6] + '</div>';
+        mi = 6;
+        return;
+      }
+      if (!done) setTimeout(tick, 60);
+    }
+    tick();
+  })();
+
+  // SLIDE 6: Matrix rain
+  (function matrixRain() {
+    var canvas = document.getElementById('matrixCanvas');
+    var container = document.getElementById('matrixRain');
+    var ctx = canvas.getContext('2d');
+
+    function resize() {
+      var rect = container.getBoundingClientRect();
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    var cols = Math.floor(canvas.width / 14);
+    var drops = [];
+    for (var i = 0; i < cols; i++) drops[i] = Math.floor(Math.random() * canvas.height / 20);
+
+    var chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEF';
+
+    function drawMatrix() {
+      if (!container.parentElement.classList.contains('active')) {
+        requestAnimationFrame(drawMatrix);
+        return;
+      }
+      ctx.fillStyle = 'rgba(10,10,10,0.05)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.font = '14px Fira Code, monospace';
+      for (var i = 0; i < drops.length; i++) {
+        var char = chars[Math.floor(Math.random() * chars.length)];
+        var x = i * 14;
+        var y = drops[i] * 14;
+        ctx.fillStyle = '#00ff41';
+        ctx.fillText(char, x, y);
+        ctx.fillStyle = 'rgba(0,255,65,0.3)';
+        ctx.fillText(char, x, y - 14);
+        if (y > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
+      }
+      requestAnimationFrame(drawMatrix);
+    }
+    drawMatrix();
+  })();
+
+  // SLIDE 8: Scroll-up animation triggers on active
+  (function scrollClear() {
+    var slide8 = slides[7];
+    var scrollContent = slide8.querySelector('.scroll-content');
+    var observer = new MutationObserver(function() {
+      if (slide8.classList.contains('active')) {
+        scrollContent.style.animation = 'none';
+        void scrollContent.offsetHeight;
+        scrollContent.style.animation = 'scrollUp 1.8s cubic-bezier(.4,0,.2,1) forwards';
+      }
+    });
+    observer.observe(slide8, { attributes: true, attributeFilter: ['class'] });
+  })();
+
+  updateStatus(0);
+})();
+</script>
+</body>
+</html>
