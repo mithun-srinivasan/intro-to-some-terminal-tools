@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Terminal Presentation</title>
+<title>Intro to Some Terminal Tools</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&display=swap" rel="stylesheet">
@@ -28,7 +28,6 @@ body{display:flex;flex-direction:column}
 .progress-bar-fill{height:100%;background:#00ff41;transition:width .6s cubic-bezier(.4,0,.2,1);border-radius:2px;position:relative}
 .progress-bar-fill::after{content:'';position:absolute;top:0;right:0;width:20px;height:100%;background:linear-gradient(90deg,transparent,rgba(0,255,65,.4))}
 .slide-num{color:#00ff4199;min-width:80px;text-align:right}
-/* slide content */
 .slide-content{max-width:880px;width:100%;position:relative;z-index:2}
 h1{font-size:clamp(1.8rem,4vw,3.2rem);font-weight:700;line-height:1.3}
 h2{font-size:clamp(1.3rem,2.5vw,2rem);font-weight:500;margin-bottom:20px}
@@ -66,7 +65,7 @@ h2{font-size:clamp(1.3rem,2.5vw,2rem);font-weight:500;margin-bottom:20px}
 .blink-text{animation:blinkSoft 1.2s ease-in-out infinite}
 @keyframes blinkSoft{0%,100%{opacity:1}50%{opacity:.3}}
 .scroll-up{overflow:hidden}
-.scroll-content{animation:scrollUp 1.8s cubic-bezier(.4,0,.2,1) forwards;transform:translateY(0)}
+.scroll-content{animation:scrollUp 4s cubic-bezier(.4,0,.2,1) forwards;transform:translateY(0)}
 @keyframes scrollUp{0%{transform:translateY(0)}100%{transform:translateY(-100%)}}
 .fade-in-delay{opacity:0;animation:fadeUp .4s forwards}
 .fade-in-delay:nth-child(1){animation-delay:.15s}
@@ -90,6 +89,11 @@ h2{font-size:clamp(1.3rem,2.5vw,2rem);font-weight:500;margin-bottom:20px}
 .divider{height:1px;background:linear-gradient(90deg,transparent,#00ff4133,transparent);margin:14px 0;width:100%}
 big{font-size:1.4em}
 .typing-cursor{display:inline-block;width:10px;height:1.1em;background:#00ff41;margin-left:2px;animation:blink-cursor .8s step-end infinite;vertical-align:text-bottom}
+.tool-icon{font-size:clamp(1.8rem,3vw,2.5rem);margin-bottom:8px;display:block}
+.tool-replaces{font-size:clamp(.65rem,1vw,.75rem);color:#00ff4144;border:1px solid #00ff4122;display:inline-block;padding:2px 10px;border-radius:2px;margin-bottom:10px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px 24px;font-size:clamp(.7rem,1.1vw,.85rem);margin:8px 0}
+.two-col .label{color:#00ff4199}
+.two-col .value{color:#00ff41}
 </style>
 </head>
 <body>
@@ -98,12 +102,13 @@ big{font-size:1.4em}
 
 <div class="slides-container" id="slidesContainer">
 
-<!-- SLIDE 1: TITLE -->
+<!-- SLIDE 0: TITLE + MATRIX RAIN -->
 <div class="slide active" data-slide="0">
-  <div class="slide-content" style="text-align:center">
-    <div style="font-size:clamp(.75rem,1.2vw,.9rem);color:#00ff4133;margin-bottom:20px;letter-spacing:6px;text-transform:uppercase">TERMINAL PRESENTATION v2.0</div>
+  <div class="matrix-rain" id="matrixRain"><canvas id="matrixCanvas"></canvas></div>
+  <div class="slide-content" style="text-align:center;z-index:3">
+    <div style="font-size:clamp(.75rem,1.2vw,.9rem);color:#00ff4133;margin-bottom:20px;letter-spacing:6px;text-transform:uppercase">INTRO TO SOME TERMINAL TOOLS</div>
     <h1 id="titleLine"><span class="prompt">$</span> <span id="typedTitle"></span><span class="cursor-blink" id="titleCursor"></span></h1>
-    <div class="subtitle" id="subtitleLine" style="opacity:0">A terminal-themed slide deck · 9 slides · keyboard navigation</div>
+    <div class="subtitle" id="subtitleLine" style="opacity:0">Modern CLI replacements for a faster, prettier terminal</div>
     <div style="margin-top:40px;font-size:clamp(.65rem,1vw,.8rem);color:#00ff4144">
       <span class="tag">← → navigate</span>
       <span class="tag">ESC overview</span>
@@ -111,215 +116,495 @@ big{font-size:1.4em}
   </div>
 </div>
 
-<!-- SLIDE 2: COMMAND STYLE -->
+<!-- SLIDE 1: ABOUT ME -->
 <div class="slide" data-slide="1">
   <div class="slide-content">
-    <div class="fade-in-delay"><span class="prompt">$</span> <span class="cmd">cat about.md</span></div>
+    <div class="fade-in-delay"><span class="prompt">$</span> <span class="cmd">cat about_mithun.md</span></div>
     <div class="spacer-sm"></div>
     <div class="fade-in-delay output">
-      <div class="output-line data"># Terminal Presentation</div>
-      <div class="output-line dim">A lightweight, keyboard-driven presentation engine</div>
-      <div class="output-line data">rendered entirely in your browser.</div>
-      <div class="spacer-sm"></div>
-      <div class="output-line highlight">Features:</div>
-      <div class="output-line indent">- Zero external dependencies (except font CDN)</div>
-      <div class="output-line indent">- ASCII art &amp; terminal UI components</div>
-      <div class="output-line indent">- Matrix rain, scanlines &amp; CRT effects</div>
-      <div class="output-line indent">- Slide transitions with keyboard nav</div>
+      <div class="output-line data"># Hi! I'm Mithun!!</div>
+      <div class="output-line dim">Mithun Srinivasan · Chennai, India</div>
+      <div class="output-line dim">FOSS/Linux Enthusiast · Ambiverted Nerdy Techie</div>
+    </div>
+    <div class="spacer-sm"></div>
+    <div class="fade-in-delay output" style="font-size:clamp(.6rem,.95vw,.8rem)">
+      <div class="output-line"><span class="cmd">portfolio</span>  <a href="https://itsmithun06.notion.site/" target="_blank" style="color:#00ff4166">https://itsmithun06.notion.site/</a></div>
+      <div class="output-line"><span class="cmd">github</span>     <a href="https://github.com/mithun-srinivasan" target="_blank" style="color:#00ff4166">https://github.com/mithun-srinivasan</a></div>
+      <div class="output-line"><span class="cmd">linkedin</span>   <a href="https://www.linkedin.com/in/mithun-srinivasan-msec/" target="_blank" style="color:#00ff4166">https://www.linkedin.com/in/mithun-srinivasan-msec/</a></div>
     </div>
   </div>
 </div>
 
-<!-- SLIDE 3: ASCII ART -->
+<!-- SLIDE 2: eza -->
 <div class="slide" data-slide="2">
   <div class="slide-content">
-    <h2 class="fade-in-delay"><span class="prompt">$</span> <span class="cmd">./show --art</span></h2>
+    <div class="fade-in-delay"><span class="prompt">$</span> <span class="cmd">eza --modern</span></div>
     <div class="spacer-sm"></div>
-    <div class="fade-in-delay ascii-box" style="font-size:clamp(.6rem,1.1vw,.8rem);line-height:1.5;text-align:center;color:#00ff41">
-      ╔══════════════════════════════════════╗<br>
-      ║      TERMINAL PRESENTATION SUITE      ║<br>
-      ╠═══════╦══════════╦═══════════════════╣<br>
-      ║ MODULE ║  STATUS  ║    VERSION        ║<br>
-      ╠═══════╬══════════╬═══════════════════╣<br>
-      ║ core   ║  ● ready ║  v2.0.1          ║<br>
-      ║ ui     ║  ● ready ║  v1.9.4          ║<br>
-      ║ fx     ║  ● ready ║  v2.3.0          ║<br>
-      ║ ascii  ║  ● ready ║  v1.0.0          ║<br>
-      ╚═══════╩══════════╩═══════════════════╝
+    <div class="fade-in-delay output">
+      <div class="output-line data">eza</div>
+      <div class="output-line dim">Modern ls replacement — icons, colors, inline git status</div>
     </div>
-    <div class="fade-in-delay ascii-table" style="margin-top:16px">
-      <span class="header">Flag</span><span class="header">Description</span><span class="header">Default</span>
-      <span class="cell">--art</span><span class="cell val">Display ASCII components</span><span class="cell val">true</span>
-      <span class="cell">--crt</span><span class="cell val">Enable CRT scanlines</span><span class="cell val">true</span>
-      <span class="cell">--rain</span><span class="cell val">Matrix rain effect</span><span class="cell val">false</span>
-      <span class="cell">--help</span><span class="cell val">Show this help</span><span class="cell val">—</span>
+    <div class="spacer-sm"></div>
+    <div class="fade-in-delay output" style="font-size:clamp(.7rem,1.1vw,.85rem)">
+      <div class="output-line"><span class="prompt">$</span> <span class="cmd">eza --icons -l --git</span></div>
+      <div class="output-line">.rw-r--r── main 12KB file.rs</div>
+      <div class="output-line">.rw-r--r── main  4KB README.md</div>
+      <div class="output-line">drwxr-x── main     — src/</div>
+      <div class="spacer-sm"></div>
+      <div class="output-line"><span class="prompt">$</span> <span class="cmd">eza -T --icons</span></div>
+      <div class="output-line dim">  Tree view with directory nesting</div>
+      <div class="spacer-sm"></div>
+      <div class="output-line"><span class="prompt">$</span> <span class="cmd">eza --sort newest</span></div>
+      <div class="output-line dim">  Sort files by modification time</div>
+      <div class="spacer-sm"></div>
+      <div class="output-line"><span class="prompt">$</span> <span class="cmd">eza --only-dirs</span></div>
+      <div class="output-line dim">  List directories only</div>
+    </div>
+    <div class="spacer-sm"></div>
+    <div class="fade-in-delay ascii-table" style="font-size:clamp(.65rem,1vw,.8rem)">
+      <span class="header">Alias</span><span class="header">Command</span><span class="header">Action</span>
+      <span class="cell">ls</span><span class="cell val">eza --icons</span><span class="cell val">List files</span>
+      <span class="cell">ll</span><span class="cell val">eza -lah --icons</span><span class="cell val">Detailed list</span>
+      <span class="cell">lt</span><span class="cell val">eza -T --icons</span><span class="cell val">Tree view</span>
     </div>
   </div>
 </div>
 
-<!-- SLIDE 4: FILESYSTEM BREADCRUMB -->
+<!-- SLIDE 3: zoxide -->
 <div class="slide" data-slide="3">
   <div class="slide-content">
-    <div class="fade-in-delay breadcrumb">
-      <span>~</span><span class="sep">/</span>
-      <span>slides</span><span class="sep">/</span>
-      <span class="active-part">04_features</span>
-      <span>.md</span>
-      <span class="arrow">&gt;</span>
+    <div class="fade-in-delay"><span class="prompt">$</span> <span class="cmd">zoxide init</span></div>
+    <div class="spacer-sm"></div>
+    <div class="fade-in-delay output">
+      <div class="output-line data">zoxide</div>
+      <div class="output-line dim">Smarter cd — learns your most-used directories</div>
     </div>
     <div class="spacer"></div>
-    <div class="fade-in-delay">
-      <div class="output-line data" style="font-size:clamp(.85rem,1.3vw,1rem)"><span class="prompt">$</span> <span class="cmd">tree -L 1 --dirsfirst</span></div>
+    <div class="fade-in-delay output" style="font-size:clamp(.7rem,1.1vw,.85rem)">
+      <div class="output-line"><span class="prompt">$</span> <span class="cmd">z dotfiles</span></div>
+      <div class="output-line data">  ~/dev/dotfiles</div>
+      <div class="spacer-sm"></div>
+      <div class="output-line"><span class="prompt">$</span> <span class="cmd">z downloads</span></div>
+      <div class="output-line data">  ~/Downloads</div>
+      <div class="spacer-sm"></div>
+      <div class="output-line"><span class="prompt">$</span> <span class="cmd">zoxide query -l</span></div>
+      <div class="output-line dim">  List everything zoxide has learned</div>
+      <div class="spacer-sm"></div>
+      <div class="output-line"><span class="prompt">$</span> <span class="cmd">zoxide add ~/projects</span></div>
+      <div class="output-line dim">  Manually add a path to the database</div>
+      <div class="spacer-sm"></div>
+      <div class="output-line"><span class="prompt">$</span> <span class="cmd">zoxide query docs</span></div>
+      <div class="output-line dim">  Query for a specific directory</div>
     </div>
     <div class="spacer-sm"></div>
-    <div class="fade-in-delay output" style="font-size:clamp(.75rem,1.2vw,.9rem)">
-      <div class="output-line">.</div>
-      <div class="output-line">├── <span style="color:#00aaff">slides/</span></div>
-      <div class="output-line">│   ├── 01_title.md</div>
-      <div class="output-line">│   ├── 02_about.md</div>
-      <div class="output-line">│   ├── 03_ascii.md</div>
-      <div class="output-line">│   ├── <span style="color:#00ff41;font-weight:500">04_features.md</span></div>
-      <div class="output-line">│   ├── 05_progress.md</div>
-      <div class="output-line">│   ├── 06_matrix.md</div>
-      <div class="output-line">│   ├── 07_messages.md</div>
-      <div class="output-line">│   ├── 08_clear.md</div>
-      <div class="output-line">│   └── 09_end.md</div>
-      <div class="output-line">├── <span style="color:#00aaff">assets/</span></div>
-      <div class="output-line">├── index.html</div>
-      <div class="output-line">└── README.md</div>
+    <div class="fade-in-delay two-col">
+      <span class="label">Replaces:</span><span class="value">cd</span>
+      <span class="label">Alias:</span><span class="value">z → zoxide</span>
     </div>
   </div>
 </div>
 
-<!-- SLIDE 5: PROGRESS BAR -->
+<!-- SLIDE 4: superfile -->
 <div class="slide" data-slide="4">
   <div class="slide-content">
-    <h2 class="fade-in-delay"><span class="prompt">$</span> <span class="cmd">./deploy --status</span></h2>
-    <div class="spacer"></div>
-    <div class="fade-in-delay" style="margin:8px 0">
-      <div style="display:flex;justify-content:space-between;font-size:clamp(.7rem,1.1vw,.85rem);color:#00ff4199;margin-bottom:4px">
-        <span>Building assets...</span>
-        <span id="deployPercent">0%</span>
-      </div>
-      <div class="progress-bar-bg" style="width:100%">
-        <div class="progress-bar-fill" id="deployBar" style="width:0%"></div>
-      </div>
+    <div class="fade-in-delay"><span class="prompt">$</span> <span class="cmd">spf</span></div>
+    <div class="spacer-sm"></div>
+    <div class="fade-in-delay output">
+      <div class="output-line data">superfile</div>
+      <div class="output-line dim">Full terminal file manager with a visual TUI</div>
     </div>
     <div class="spacer-sm"></div>
-    <div class="fade-in-delay" style="margin:8px 0">
-      <div style="display:flex;justify-content:space-between;font-size:clamp(.7rem,1.1vw,.85rem);color:#00ff4199;margin-bottom:4px">
-        <span>Optimizing images...</span>
-        <span id="optimPercent">0%</span>
-      </div>
-      <div class="progress-bar-bg" style="width:100%">
-        <div class="progress-bar-fill" id="optimBar" style="width:0%"></div>
-      </div>
+    <div class="fade-in-delay ascii-box" style="font-size:clamp(.55rem,.9vw,.75rem);line-height:1.5;text-align:center;color:#00ff41">
+      ┌─ superfile ──────────────────────────┐<br>
+      │  📁 projects/  │  📄 README.md       │<br>
+      │  📁 src/       │  📄 main.rs         │<br>
+      │  ────────────── ──────────────────── │<br>
+      │  Tab: pane     │  Space: select      │<br>
+      │  y: copy       │  p: paste           │<br>
+      │  r: rename     │  d: delete          │<br>
+      │  /: search     │  .: toggle hidden   │<br>
+      └──────────────────────────────────────┘
     </div>
     <div class="spacer-sm"></div>
-    <div class="fade-in-delay" style="margin:8px 0">
-      <div style="display:flex;justify-content:space-between;font-size:clamp(.7rem,1.1vw,.85rem);color:#00ff4199;margin-bottom:4px">
-        <span>Linking modules...</span>
-        <span id="linkPercent">0%</span>
-      </div>
-      <div class="progress-bar-bg" style="width:100%">
-        <div class="progress-bar-fill" id="linkBar" style="width:0%"></div>
-      </div>
+    <div class="fade-in-delay output" style="font-size:clamp(.65rem,1vw,.8rem)">
+      <div class="output-line"><span class="prompt">$</span> <span class="cmd">spf</span></div>
+      <div class="output-line dim">  Launch the TUI file browser</div>
+      <div class="spacer-sm"></div>
+      <div class="output-line"><span class="prompt">$</span> <span class="cmd">spf --help</span></div>
+      <div class="output-line dim">  Show available flags and options</div>
     </div>
-    <div class="spacer"></div>
-    <div class="fade-in-delay output" id="deployOutput" style="font-size:clamp(.7rem,1.1vw,.85rem)">
-      <div class="output-line dim">⏳ Waiting for build to complete...</div>
+    <div class="spacer-sm"></div>
+    <div class="fade-in-delay two-col">
+      <span class="label">Replaces:</span><span class="value">cp / mv / rm flags</span>
+      <span class="label">Launch:</span><span class="value">spf</span>
     </div>
   </div>
 </div>
 
-<!-- SLIDE 6: MATRIX RAIN -->
+<!-- SLIDE 5: ripgrep -->
 <div class="slide" data-slide="5">
-  <div class="matrix-rain" id="matrixRain"><canvas id="matrixCanvas"></canvas></div>
-  <div class="slide-content" style="text-align:center;z-index:3">
-    <h2 class="fade-in-delay glitch" data-text="MATRIX OVERLAY" style="font-size:clamp(1.2rem,2.5vw,2rem)">MATRIX OVERLAY</h2>
-    <div class="spacer"></div>
-    <div class="fade-in-delay output" style="font-size:clamp(.8rem,1.3vw,.95rem);text-align:left;display:inline-block">
-      <div class="output-line"><span class="prompt">$</span> <span class="cmd">systemctl --status</span></div>
-      <div class="output-line data">  ● terminal.slice    active</div>
-      <div class="output-line data">  ● matrix.service    running</div>
-      <div class="output-line data">  ● crt.effect        enabled</div>
+  <div class="slide-content">
+    <div class="fade-in-delay"><span class="prompt">$</span> <span class="cmd">rg --fast</span></div>
+    <div class="spacer-sm"></div>
+    <div class="fade-in-delay output">
+      <div class="output-line data">ripgrep (rg)</div>
+      <div class="output-line dim">Recursively search file contents at blazing speed</div>
+    </div>
+    <div class="spacer-sm"></div>
+    <div class="fade-in-delay output" style="font-size:clamp(.7rem,1.1vw,.85rem)">
+      <div class="output-line"><span class="prompt">$</span> <span class="cmd">rg TODO</span></div>
+      <div class="output-line highlight">src/app.js:42    // TODO: handle edge case</div>
+      <div class="spacer-sm"></div>
+      <div class="output-line"><span class="prompt">$</span> <span class="cmd">rg -i hello</span></div>
+      <div class="output-line dim">  Case-insensitive search across all files</div>
+      <div class="spacer-sm"></div>
+      <div class="output-line"><span class="prompt">$</span> <span class="cmd">rg "Scanner" *.java</span></div>
+      <div class="output-line dim">  Search only .java files for a pattern</div>
+      <div class="spacer-sm"></div>
+      <div class="output-line"><span class="prompt">$</span> <span class="cmd">rg -c function</span></div>
+      <div class="output-line dim">  Count matches per file</div>
+      <div class="spacer-sm"></div>
+      <div class="output-line"><span class="prompt">$</span> <span class="cmd">rg -l error --type py</span></div>
+      <div class="output-line dim">  List only filenames with matches (Python files)</div>
+    </div>
+    <div class="spacer-sm"></div>
+    <div class="fade-in-delay two-col">
+      <span class="label">Replaces:</span><span class="value">grep -r</span>
+      <span class="label">Speed:</span><span class="value">10-100x faster than grep</span>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 6: fd -->
+<div class="slide" data-slide="6">
+  <div class="slide-content">
+    <div class="fade-in-delay"><span class="prompt">$</span> <span class="cmd">fd --find</span></div>
+    <div class="spacer-sm"></div>
+    <div class="fade-in-delay output">
+      <div class="output-line data">fd</div>
+      <div class="output-line dim">Find files by name — simple, fast, intuitive</div>
+    </div>
+    <div class="spacer-sm"></div>
+    <div class="fade-in-delay output" style="font-size:clamp(.7rem,1.1vw,.85rem)">
+      <div class="output-line"><span class="prompt">$</span> <span class="cmd">fd .java</span></div>
+      <div class="output-line data">  ./src/main/App.java</div>
+      <div class="output-line data">  ./src/test/AppTest.java</div>
+      <div class="spacer-sm"></div>
+      <div class="output-line"><span class="prompt">$</span> <span class="cmd">fd --type d</span></div>
+      <div class="output-line dim">  Find only directories</div>
+      <div class="spacer-sm"></div>
+      <div class="output-line"><span class="prompt">$</span> <span class="cmd">fd --hidden config</span></div>
+      <div class="output-line dim">  Include hidden files and directories</div>
+      <div class="spacer-sm"></div>
+      <div class="output-line"><span class="prompt">$</span> <span class="cmd">fd --extension py</span></div>
+      <div class="output-line dim">  Find all Python files by extension</div>
+      <div class="spacer-sm"></div>
+      <div class="output-line"><span class="prompt">$</span> <span class="cmd">fd --exec wc -l</span></div>
+      <div class="output-line dim">  Run a command on each result</div>
+    </div>
+    <div class="spacer-sm"></div>
+    <div class="fade-in-delay two-col">
+      <span class="label">Replaces:</span><span class="value">find</span>
+      <span class="label">Pattern:</span><span class="value">fd [pattern] [path]</span>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7: fzf -->
+<div class="slide" data-slide="7">
+  <div class="slide-content">
+    <div class="fade-in-delay"><span class="prompt">$</span> <span class="cmd">fzf --fuzzy</span></div>
+    <div class="spacer-sm"></div>
+    <div class="fade-in-delay output">
+      <div class="output-line data">fzf — fuzzy finder</div>
+      <div class="output-line dim">Fuzzy-match anything: files, history, commands</div>
+    </div>
+    <div class="spacer-sm"></div>
+    <div class="fade-in-delay output" style="font-size:clamp(.7rem,1.1vw,.85rem)">
+      <div class="output-line"><span class="prompt">$</span> <span class="cmd">Ctrl+R</span></div>
+      <div class="output-line dim">  Fuzzy-search command history</div>
+      <div class="spacer-sm"></div>
+      <div class="output-line"><span class="prompt">$</span> <span class="cmd">Get-ChildItem -Directory | fzf</span></div>
+      <div class="output-line dim">  Pipe directory list into fzf</div>
+      <div class="spacer-sm"></div>
+      <div class="output-line"><span class="prompt">$</span> <span class="cmd">code (fzf)</span></div>
+      <div class="output-line dim">  Select a file with fzf, open in VS Code</div>
+      <div class="spacer-sm"></div>
+      <div class="output-line"><span class="prompt">$</span> <span class="cmd">rg "TODO" | fzf</span></div>
+      <div class="output-line dim">  Pipe rg results into fzf for interactive filtering</div>
+      <div class="spacer-sm"></div>
+      <div class="output-line"><span class="prompt">$</span> <span class="cmd">**<TAB></span></div>
+      <div class="output-line dim">  Fuzzy completion in shell (zsh/bash)</div>
     </div>
     <div class="spacer"></div>
     <div class="fade-in-delay" style="font-size:clamp(.65rem,1vw,.8rem);color:#00ff4144">Content overlaid on live Matrix digital rain</div>
   </div>
 </div>
 
-<!-- SLIDE 7: ERROR / SUCCESS MESSAGES -->
-<div class="slide" data-slide="6">
+<!-- SLIDE 8: delta -->
+<div class="slide" data-slide="8">
   <div class="slide-content">
-    <h2 class="fade-in-delay"><span class="prompt">$</span> <span class="cmd">./validate --all</span></h2>
+    <div class="fade-in-delay"><span class="prompt">$</span> <span class="cmd">delta --diff</span></div>
     <div class="spacer-sm"></div>
-    <div class="fade-in-delay msg-success">
-      <span class="prefix">✓ SUCCESS</span> All 12 core modules passed validation
+    <div class="fade-in-delay output">
+      <div class="output-line data">delta</div>
+      <div class="output-line dim">Syntax-highlighted pager for git diff output</div>
     </div>
-    <div class="fade-in-delay msg-success">
-      <span class="prefix">✓ SUCCESS</span> ASCII renderer: 100% compatibility
+    <div class="spacer-sm"></div>
+    <div class="fade-in-delay output" style="font-size:clamp(.7rem,1.1vw,.85rem)">
+      <div class="output-line"><span class="prompt">$</span> <span class="cmd">git show HEAD</span></div>
+      <div class="output-line dim">  Renders with:</div>
+      <div class="output-line indent">• Syntax-highlighted code</div>
+      <div class="output-line indent">• Side-by-side diff view</div>
+      <div class="output-line indent">• Line numbers + word-level changes</div>
+      <div class="spacer-sm"></div>
+      <div class="output-line"><span class="prompt">$</span> <span class="cmd">git diff</span></div>
+      <div class="output-line dim">  Delta renders staged/unstaged diffs automatically</div>
+      <div class="spacer-sm"></div>
+      <div class="output-line"><span class="prompt">$</span> <span class="cmd">delta --side-by-side</span></div>
+      <div class="output-line dim">  Force side-by-side view</div>
     </div>
-    <div class="fade-in-delay msg-warning">
-      <span class="prefix">⚠ WARNING</span> Deprecated API: slide._legacy() will be removed in v3.0
-    </div>
-    <div class="fade-in-delay msg-error">
-      <span class="prefix">✗ ERROR</span> Connection timeout on remote host 10.0.1.45
-    </div>
-    <div class="fade-in-delay msg-warning">
-      <span class="prefix">⚠ WARNING</span> 2 unused dependencies detected in package.json
-    </div>
-    <div class="fade-in-delay msg-success">
-      <span class="prefix">✓ SUCCESS</span> Build artifacts deployed to ./dist/
-    </div>
-    <div class="spacer"></div>
-    <div class="fade-in-delay" style="font-size:clamp(.7rem,1.1vw,.85rem);color:#00ff4166">
-      <span class="prompt">$</span> <span class="cmd">echo $?</span>  →  <span style="color:#00ff41">0</span>
+    <div class="spacer-sm"></div>
+    <div class="fade-in-delay two-col">
+      <span class="label">Replaces:</span><span class="value">plain git diff</span>
+      <span class="label">Default:</span><span class="value">Configured as default Git pager</span>
     </div>
   </div>
 </div>
 
-<!-- SLIDE 8: SCROLL CLEAR TRANSITION -->
-<div class="slide" data-slide="7">
+<!-- SLIDE 9: lazygit -->
+<div class="slide" data-slide="9">
+  <div class="slide-content">
+    <div class="fade-in-delay"><span class="prompt">$</span> <span class="cmd">lazygit</span></div>
+    <div class="spacer-sm"></div>
+    <div class="fade-in-delay output">
+      <div class="output-line data">lazygit</div>
+      <div class="output-line dim">Full git TUI — no more memorizing flags</div>
+    </div>
+    <div class="spacer-sm"></div>
+    <div class="fade-in-delay ascii-box" style="font-size:clamp(.55rem,.9vw,.75rem);line-height:1.5;text-align:center;color:#00ff41">
+      ┌─ lazygit ───────────────────────────┐<br>
+      │  Status   │  Branch: main           │<br>
+      │  ──────── │  ─────────────────────  │<br>
+      │  ● M src/ │  ↑  feat/header         │<br>
+      │  ● M docs │  ●  main                │<br>
+      │  ■ U new  │  ↓  fix/footer          │<br>
+      │  ──────── │  ─────────────────────  │<br>
+      │  [1-5] panels  │  space to stage    │<br>
+      └──────────────────────────────────────┘
+    </div>
+    <div class="spacer-sm"></div>
+    <div class="fade-in-delay output" style="font-size:clamp(.65rem,1vw,.8rem)">
+      <div class="output-line"><span class="prompt">$</span> <span class="cmd">lazygit</span></div>
+      <div class="output-line dim">  Launch the git TUI</div>
+      <div class="spacer-sm"></div>
+      <div class="output-line"><span class="prompt">$</span> <span class="cmd">lazygit --version</span></div>
+      <div class="output-line dim">  Check installed version</div>
+    </div>
+    <div class="spacer-sm"></div>
+    <div class="fade-in-delay two-col">
+      <span class="label">Replaces:</span><span class="value">git add / commit / branch</span>
+      <span class="label">Panels:</span><span class="value">Status, Branch, Commit, Stash</span>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 10: glow -->
+<div class="slide" data-slide="10">
+  <div class="slide-content">
+    <div class="fade-in-delay"><span class="prompt">$</span> <span class="cmd">glow --render</span></div>
+    <div class="spacer-sm"></div>
+    <div class="fade-in-delay output">
+      <div class="output-line data">glow</div>
+      <div class="output-line dim">Render Markdown in the terminal — beautifully</div>
+    </div>
+    <div class="spacer-sm"></div>
+    <div class="fade-in-delay output" style="font-size:clamp(.7rem,1.1vw,.85rem)">
+      <div class="output-line"><span class="prompt">$</span> <span class="cmd">glow README.md</span></div>
+      <div class="output-line data">  # Project Title           ← rendered header</div>
+      <div class="output-line dim">  Description here...        ← rendered body</div>
+      <div class="output-line">  - List item                ← rendered list</div>
+      <div class="spacer-sm"></div>
+      <div class="output-line"><span class="prompt">$</span> <span class="cmd">glow</span></div>
+      <div class="output-line dim">  Browse all .md files in the current folder</div>
+      <div class="spacer-sm"></div>
+      <div class="output-line"><span class="prompt">$</span> <span class="cmd">glow -p README.md</span></div>
+      <div class="output-line dim">  Render with a pager for long files</div>
+      <div class="spacer-sm"></div>
+      <div class="output-line"><span class="prompt">$</span> <span class="cmd">glow --style light</span></div>
+      <div class="output-line dim">  Use a light color scheme</div>
+    </div>
+    <div class="spacer-sm"></div>
+    <div class="fade-in-delay two-col">
+      <span class="label">Replaces:</span><span class="value">cat for .md files</span>
+      <span class="label">Style:</span><span class="value">Headers, bold, tables, code blocks</span>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 11: bat -->
+<div class="slide" data-slide="11">
+  <div class="slide-content">
+    <div class="fade-in-delay"><span class="prompt">$</span> <span class="cmd">bat --view</span></div>
+    <div class="spacer-sm"></div>
+    <div class="fade-in-delay output">
+      <div class="output-line data">bat</div>
+      <div class="output-line dim">cat clone with syntax highlighting + line numbers</div>
+    </div>
+    <div class="spacer-sm"></div>
+    <div class="fade-in-delay output" style="font-size:clamp(.7rem,1.1vw,.85rem)">
+      <div class="output-line"><span class="prompt">$</span> <span class="cmd">bat Demo.java</span></div>
+      <div class="output-line data">  1 │ public class Demo {</div>
+      <div class="output-line data">  2 │     public static void main(String[] args) {</div>
+      <div class="output-line data">  3 │         System.out.println("Hello");</div>
+      <div class="output-line data">  4 │     }</div>
+      <div class="output-line data">  5 │ }</div>
+      <div class="spacer-sm"></div>
+      <div class="output-line"><span class="prompt">$</span> <span class="cmd">bat --list-themes</span></div>
+      <div class="output-line dim">  Preview all available color themes</div>
+      <div class="spacer-sm"></div>
+      <div class="output-line"><span class="prompt">$</span> <span class="cmd">bat --line-range 10:20 file.py</span></div>
+      <div class="output-line dim">  Show only specific line range</div>
+      <div class="spacer-sm"></div>
+      <div class="output-line"><span class="prompt">$</span> <span class="cmd">bat --language rust file.py</span></div>
+      <div class="output-line dim">  Force syntax highlighting language</div>
+    </div>
+    <div class="spacer-sm"></div>
+    <div class="fade-in-delay two-col">
+      <span class="label">Alias:</span><span class="value">cat → bat</span>
+      <span class="label">Style:</span><span class="value">bat --style=numbers</span>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 12: btop4win -->
+<div class="slide" data-slide="12">
   <div class="slide-content" style="text-align:center">
-    <div class="scroll-up" style="width:100%">
-      <div class="scroll-content">
-        <div style="font-size:clamp(.8rem,1.3vw,.95rem);color:#00ff4166;margin-bottom:30px">
-          <div class="output-line dim">[SESSION LOG] 2026-07-25 14:32:01</div>
-          <div class="output-line dim">> processing slide 08_clear.md</div>
-          <div class="output-line dim">> buffer flush — 142 lines</div>
-          <div class="output-line dim">> scroll: reset viewport</div>
-          <div class="output-line dim">> ...</div>
-        </div>
-        <div class="divider"></div>
-        <h2 style="margin-top:20px;font-size:clamp(1.2rem,2.5vw,2rem)">
-          <span class="prompt">$</span> <span class="cmd">clear</span><span class="cursor-blink"></span>
-        </h2>
-        <div class="spacer"></div>
-        <div style="font-size:clamp(.7rem,1.1vw,.85rem);color:#00ff4144">
-          screen cleared · 142 lines flushed
-        </div>
+    <div class="fade-in-delay" style="text-align:left;display:inline-block;width:100%;max-width:600px">
+      <div><span class="prompt">$</span> <span class="cmd">btop4win</span></div>
+      <div class="spacer-sm"></div>
+      <div class="output">
+        <div class="output-line data">btop4win</div>
+        <div class="output-line dim">Live CPU, RAM, and process graphs in the terminal</div>
+      </div>
+      <div class="spacer-sm"></div>
+      <div class="ascii-box" style="font-size:clamp(.5rem,.8vw,.7rem);line-height:1.4;text-align:center;color:#00ff41">
+        ┌─ btop4win ───────────────────────────────────┐<br>
+        │  CPU ████████░░░░  68%  2.4 GHz              │<br>
+        │  MEM ██████░░░░░░  52%  8.3 GB / 16 GB       │<br>
+        │  SWP ██░░░░░░░░░░  12%  1.2 GB / 10 GB       │<br>
+        │  ───────────────────────────────────────────  │<br>
+        │  PID │ CPU │ MEM │ COMMAND                   │<br>
+        │  142 │ 2.1 │ 4.5 │ code.exe                  │<br>
+        │  203 │ 1.8 │ 2.1 │ firefox.exe               │<br>
+        └──────────────────────────────────────────────┘
+      </div>
+      <div class="spacer-sm"></div>
+      <div class="fade-in-delay output" style="font-size:clamp(.65rem,1vw,.8rem);text-align:left">
+        <div class="output-line"><span class="prompt">$</span> <span class="cmd">btop4win</span></div>
+        <div class="output-line dim">  Launch the system monitor</div>
+        <div class="spacer-sm"></div>
+        <div class="output-line"><span class="prompt">$</span> <span class="cmd">btop4win --version</span></div>
+        <div class="output-line dim">  Show version info</div>
+      </div>
+      <div class="spacer"></div>
+      <div class="two-col">
+        <span class="label">Replaces:</span><span class="value">Task Manager</span>
+        <span class="label">Themes:</span><span class="value">Customizable color schemes</span>
       </div>
     </div>
   </div>
 </div>
 
-<!-- SLIDE 9: END / SUMMARY -->
-<div class="slide" data-slide="8">
+<!-- SLIDE 13: kew -->
+<div class="slide" data-slide="13">
   <div class="slide-content" style="text-align:center">
-    <h2 style="font-size:clamp(1.5rem,3vw,2.5rem);margin-bottom:20px">
-      <span class="prompt">$</span> <span class="cmd">./finish</span>
-    </h2>
-    <div class="spacer"></div>
-    <div class="blink-text" style="font-size:clamp(1.8rem,4vw,3.2rem);font-weight:700;margin:20px 0">
-      THANK YOU
-    </div>
-    <div class="spacer-sm"></div>
-    <div style="font-size:clamp(.85rem,1.4vw,1.1rem);color:#00ff4199">
-      <div><span class="prompt">$</span> <span class="cmd">source ~/.bashrc</span>  <span class="cursor-blink"></span></div>
+    <div class="fade-in-delay" style="text-align:left;display:inline-block;width:100%;max-width:600px">
+      <div><span class="prompt">$</span> <span class="cmd">kew --play</span></div>
       <div class="spacer-sm"></div>
-      <div class="output-line dim">Terminal Presentation Demo · 9 slides</div>
-      <div class="output-line dim">Press <span style="color:#00ff41">←</span> or <span style="color:#00ff41">→</span> to restart</div>
+      <div class="output">
+        <div class="output-line data">kew</div>
+        <div class="output-line dim">Terminal music player — browse and play local music</div>
+      </div>
+      <div class="spacer-sm"></div>
+      <div class="ascii-box" style="font-size:clamp(.5rem,.8vw,.7rem);line-height:1.5;text-align:center;color:#00ff41">
+        ┌─ kew ───────────────────────────────────┐<br>
+        │  ▶  Now Playing                          │<br>
+        │  ─────────────────────────────────────── │<br>
+        │  🎵  Midnight Dreams                     │<br>
+        │  👤  Artist                             │<br>
+        │  ⏤⏤⏤⏤⏤⏤⏤⏤⏤⏤⏤⏤⏤⏤⏤⏤⏤⏤⏤⏤ │<br>
+        │  ⏮ ⏸ ⏭  ♥  🔁                          │<br>
+        │  ─────────────────────────────────────── │<br>
+        │  Library  │  Playlists  │  Search        │<br>
+        └──────────────────────────────────────────┘
+      </div>
+      <div class="spacer-sm"></div>
+      <div class="fade-in-delay output" style="font-size:clamp(.65rem,1vw,.8rem);text-align:left">
+        <div class="output-line"><span class="prompt">$</span> <span class="cmd">kew</span></div>
+        <div class="output-line dim">  Launch the music player TUI</div>
+        <div class="spacer-sm"></div>
+        <div class="output-line"><span class="prompt">$</span> <span class="cmd">kew --version</span></div>
+        <div class="output-line dim">  Show version info</div>
+      </div>
+      <div class="spacer"></div>
+      <div class="two-col">
+        <span class="label">Category:</span><span class="value">Terminal music player</span>
+        <span class="label">Type:</span><span class="value">Keyboard-driven TUI</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 14: Q&A -->
+<div class="slide" data-slide="14">
+  <div class="slide-content" style="text-align:center">
+    <div class="fade-in-delay"><span class="prompt">$</span> <span class="cmd">./qa --session</span></div>
+    <div class="spacer"></div>
+    <div class="fade-in-delay" style="font-size:clamp(1.8rem,4vw,3.2rem);font-weight:700;margin:20px 0">
+      QUESTIONS & ANSWERS
+    </div>
+    <div class="spacer"></div>
+    <div class="fade-in-delay output">
+      <div class="output-line dim" style="font-size:clamp(.85rem,1.4vw,1.1rem)">Any questions about the tools we covered?</div>
+    </div>
+    <div class="spacer"></div>
+    <div class="fade-in-delay" style="font-size:clamp(.7rem,1.1vw,.85rem);color:#00ff4166">
+      <span class="prompt">$</span> <span class="cmd">echo "Ask away!"</span> <span class="cursor-blink"></span>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 15: END -->
+<div class="slide" data-slide="15">
+  <div class="slide-content" style="text-align:center">
+    <div class="scroll-up" style="width:100%">
+      <div class="scroll-content">
+        <div style="font-size:clamp(.75rem,1.2vw,.9rem);color:#00ff4166;margin-bottom:30px">
+          <div class="output-line dim">[SESSION LOG] 2026-07-26 12:00:00</div>
+          <div class="output-line dim">> 12 tools presented</div>
+          <div class="output-line dim">> slide deck complete</div>
+          <div class="output-line dim">> ...</div>
+        </div>
+        <div class="divider"></div>
+        <div class="spacer"></div>
+        <div class="blink-text" style="font-size:clamp(1.8rem,4vw,3.2rem);font-weight:700;margin:20px 0">
+          THANK YOU
+        </div>
+        <div class="spacer-sm"></div>
+        <div style="font-size:clamp(.85rem,1.4vw,1.1rem);color:#00ff4199">
+          <div><span class="prompt">$</span> <span class="cmd">source ~/.bashrc</span>  <span class="cursor-blink"></span></div>
+          <div class="spacer-sm"></div>
+          <div class="output-line dim">Intro to Some Terminal Tools · 16 slides</div>
+          <div class="spacer-sm"></div>
+          <div style="font-size:clamp(.6rem,.9vw,.75rem);color:#00ff4144">
+            <span class="tag">eza</span><span class="tag">zoxide</span><span class="tag">superfile</span><span class="tag">ripgrep</span><span class="tag">fd</span><span class="tag">fzf</span>
+            <span class="tag">delta</span><span class="tag">lazygit</span><span class="tag">glow</span><span class="tag">bat</span><span class="tag">btop4win</span><span class="tag">kew</span>
+          </div>
+          <div class="spacer"></div>
+          <div class="output-line dim">Press <span style="color:#00ff41">←</span> or <span style="color:#00ff41">→</span> to restart</div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -329,14 +614,14 @@ big{font-size:1.4em}
 <div class="status-bar">
   <div class="status-left">
     <span class="status-dot"></span>
-    <span id="statusPrompt">user@terminal:~/slides $</span>
+    <span id="statusPrompt">mithun@terminal:~/tools $</span>
   </div>
   <div class="status-right">
     <span class="status-progress">
       <span id="statusPercent">0%</span>
       <span class="progress-bar-bg"><span class="progress-bar-fill" id="statusBarFill" style="width:0%"></span></span>
     </span>
-    <span class="slide-num" id="slideNum">01 / 09</span>
+    <span class="slide-num" id="slideNum">01 / 16</span>
   </div>
 </div>
 
@@ -413,7 +698,7 @@ big{font-size:1.4em}
     }
   });
 
-  // click nav: left half = prev, right half = next
+  // click nav
   document.addEventListener('click', function(e) {
     if (e.target.closest('.status-bar')) return;
     var rect = document.body.getBoundingClientRect();
@@ -421,9 +706,9 @@ big{font-size:1.4em}
     else if (e.clientX > rect.width * 0.6) goToSlide(current + 1);
   });
 
-  // SLIDE 1: Typewriter
+  // SLIDE 0: Typewriter
   (function titleTypewriter() {
-    var text = 'Terminal Presentation Demo';
+    var text = 'Intro to Some Terminal Tools';
     var el = document.getElementById('typedTitle');
     var cursor = document.getElementById('titleCursor');
     var subtitle = document.getElementById('subtitleLine');
@@ -444,57 +729,11 @@ big{font-size:1.4em}
     setTimeout(type, 400);
   })();
 
-  // SLIDE 5: Progress bar animation
-  (function deployProgress() {
-    var steps = [
-      { bar: 'deployBar', pct: 'deployPercent', label: 'deploy', target: 100 },
-      { bar: 'optimBar', pct: 'optimPercent', label: 'optim', target: 100 },
-      { bar: 'linkBar', pct: 'linkPercent', label: 'link', target: 100 }
-    ];
-    var outputEl = document.getElementById('deployOutput');
-    var messages = [
-      '⏳ Initializing build pipeline...',
-      '⚙️  Compiling source modules...',
-      '📦 Bundling dependencies...',
-      '🔗 Linking shared objects...',
-      '🧪 Running test suite...',
-      '✅ Build complete. Ready for deployment.'
-    ];
-    var mi = 0;
-
-    var pct = [0, 0, 0];
-    var speeds = [180, 240, 300];
-
-    function tick() {
-      var done = true;
-      for (var s = 0; s < steps.length; s++) {
-        if (pct[s] < steps[s].target) {
-          done = false;
-          pct[s] = Math.min(pct[s] + 1, steps[s].target);
-          document.getElementById(steps[s].bar).style.width = pct[s] + '%';
-          document.getElementById(steps[s].pct).textContent = pct[s] + '%';
-        }
-      }
-
-      if (pct[0] > 20 && mi === 0) { outputEl.innerHTML = '<div class="output-line dim">' + messages[1] + '</div>'; mi++; }
-      if (pct[0] > 50 && mi === 1) { outputEl.innerHTML = '<div class="output-line dim">' + messages[2] + '</div>'; mi++; }
-      if (pct[1] > 30 && mi === 2) { outputEl.innerHTML = '<div class="output-line dim">' + messages[3] + '</div>'; mi++; }
-      if (pct[1] > 70 && mi === 3) { outputEl.innerHTML = '<div class="output-line dim">' + messages[4] + '</div>'; mi++; }
-      if (pct[2] > 50 && mi === 4) { outputEl.innerHTML = '<div class="output-line dim">' + messages[5] + '</div>'; mi++; }
-      if (done && mi < 6) {
-        outputEl.innerHTML = '<div class="output-line data" style="color:#00ff41">✅ ' + messages[6] + '</div>';
-        mi = 6;
-        return;
-      }
-      if (!done) setTimeout(tick, 60);
-    }
-    tick();
-  })();
-
-  // SLIDE 6: Matrix rain
+  // SLIDE 0: Matrix rain (on title)
   (function matrixRain() {
     var canvas = document.getElementById('matrixCanvas');
     var container = document.getElementById('matrixRain');
+    if (!canvas || !container) return;
     var ctx = canvas.getContext('2d');
 
     function resize() {
@@ -535,18 +774,20 @@ big{font-size:1.4em}
     drawMatrix();
   })();
 
-  // SLIDE 8: Scroll-up animation triggers on active
+  // SLIDE 15: Scroll-up on end slide (slowed)
   (function scrollClear() {
-    var slide8 = slides[7];
-    var scrollContent = slide8.querySelector('.scroll-content');
+    var endSlide = slides[15];
+    if (!endSlide) return;
+    var scrollContent = endSlide.querySelector('.scroll-content');
+    if (!scrollContent) return;
     var observer = new MutationObserver(function() {
-      if (slide8.classList.contains('active')) {
+      if (endSlide.classList.contains('active')) {
         scrollContent.style.animation = 'none';
         void scrollContent.offsetHeight;
-        scrollContent.style.animation = 'scrollUp 1.8s cubic-bezier(.4,0,.2,1) forwards';
+        scrollContent.style.animation = 'scrollUp 4s cubic-bezier(.4,0,.2,1) forwards';
       }
     });
-    observer.observe(slide8, { attributes: true, attributeFilter: ['class'] });
+    observer.observe(endSlide, { attributes: true, attributeFilter: ['class'] });
   })();
 
   updateStatus(0);
